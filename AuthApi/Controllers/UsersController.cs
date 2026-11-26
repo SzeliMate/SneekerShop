@@ -29,7 +29,8 @@ namespace AuthApi.Controllers
                 Id = Guid.NewGuid(),
                 Name = newUserDto.Name,
                 Email = newUserDto.Email,
-                Password = newUserDto.Password,
+                Password = hash,
+                Salt = salt
             };
 
             if (user is null)
@@ -115,6 +116,31 @@ namespace AuthApi.Controllers
             }
 
             return StatusCode(400, new { message = "Hiba" });
+        }
+        [HttpPost("login")]
+            public async Task<IActionResult> Login([FromBody] LoginUserDto loginUserDto)
+        {
+            try
+            {
+                var user = await _context.Users.Include(u => u.Roles).SingleOrDefaultAsync(u => u.Email == loginUserDto.Email);
+
+                if (user is null)
+                {
+                    return StatusCode(404, new { message = "Nincs találat"});
+                }
+
+                var isValid = _passwordHasher.Verify(loginUserDto.Password!, user.Password!, user.Salt!);
+
+                if (isValid)
+                {
+                    return StatusCode(200, new { message = "Sikeres bejelentkezés"});
+                }
+                return StatusCode(404, new { message = "Hibás jelszó" });
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(400, new { message = exception.Message });
+            }
         }
     }
 }
