@@ -1,6 +1,7 @@
 ﻿using AuthApi.Models;
 using AuthApi.Models.DTOs;
 using AuthApi.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ namespace AuthApi.Controllers
     {
         private readonly AuthuserContext _context;
         private readonly PasswordHasher _passwordHasher;
+        private readonly GenerateToken _generateToken = new GenerateToken();
         public UsersController(AuthuserContext context, PasswordHasher passwordHasher)
         {
             _context = context;
@@ -43,7 +45,7 @@ namespace AuthApi.Controllers
 
             return StatusCode(201, new { message = "Felvéve" , result = user});
         }
-
+        [Authorize(Roles = "student, teacher")]
         [HttpGet("allUser")]
         public async Task<IActionResult> AllUser()
         {
@@ -133,7 +135,9 @@ namespace AuthApi.Controllers
 
                 if (isValid)
                 {
-                    return StatusCode(200, new { message = "Sikeres bejelentkezés"});
+                    var newToken = _generateToken.Token(user.Id, user.Email, user.Roles);
+
+                    return StatusCode(200, new { message = "Sikeres bejelentkezés", token = newToken});
                 }
                 return StatusCode(404, new { message = "Hibás jelszó" });
             }
