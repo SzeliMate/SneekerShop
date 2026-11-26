@@ -80,6 +80,37 @@
   },
   {
     "ContainingType": "AuthApi.Controllers.UserRoleController",
+    "Method": "AllRolesByUserId",
+    "RelativePath": "userrole/allRolesByUserId/{userId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "Id",
+        "Type": "System.Guid",
+        "IsRequired": false
+      },
+      {
+        "Name": "userId",
+        "Type": "",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "AuthApi.Controllers.UserRoleController",
+    "Method": "AllUserAllRoles",
+    "RelativePath": "userrole/allUsersAllRoles",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "AuthApi.Controllers.UserRoleController",
     "Method": "AssignRole",
     "RelativePath": "userrole/assingRole",
     "HttpMethod": "POST",
